@@ -230,16 +230,34 @@
         keys[e.code] = true;
     });
     window.addEventListener('keyup', e => keys[e.code] = false);
-// Touch support for mobile
+// Enhanced Mobile Controls: Tap sides to move, tap center/anywhere to jump
 canvas.addEventListener('touchstart', e => {
-    e.preventDefault(); // Prevents the screen from scrolling while playing
+    e.preventDefault();
     if(!isRunning) return;
-    
+
+    const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+    const canvasWidth = canvas.clientWidth;
+
+    // Movement Logic: Divide screen into thirds
+    if (touchX < canvasWidth * 0.3) {
+        // Left third: Move Left
+        player.dx = -player.speed;
+    } else if (touchX > canvasWidth * 0.7) {
+        // Right third: Move Right
+        player.dx = player.speed;
+    }
+
+    // Jump Logic: Tapping always triggers a jump if available
     if(player.jumpsLeft > 0) {
         player.dy = -player.jump;
         player.jumpsLeft--;
         player.grounded = false;
     }
+}, {passive: false});
+
+// Stop moving when finger is lifted
+canvas.addEventListener('touchend', e => {
+    player.dx = 0;
 }, {passive: false});
     function startGame() {
         score = 0; timeLeft = 30; player.x = 50; player.y = 250;
