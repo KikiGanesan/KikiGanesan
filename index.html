@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Keertana (Kiki) Ganesan | Research Scientist & Employee Analytics</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         html { scroll-behavior: smooth; }
         body {
@@ -11,6 +11,7 @@
             margin: 0; padding: 0;
             background-color: #FDF6E3;
             color: #3A3A3C;
+            overflow-x: hidden;
         }
         
         /* Header & Navigation */
@@ -77,14 +78,29 @@
 
         /* Game Styles */
         #game-section { text-align: center; background-color: #2b2b2b; padding: 100px 20px; color: #FDF6E3; border-top: 8px solid #4B5320; }
-        #game-wrapper { position: relative; display: inline-block; border: 4px solid #FDF6E3; background: #111; line-height: 0; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
-        canvas { max-width: 100%; height: auto; }
-        #game-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #game-wrapper { position: relative; display: inline-block; border: 4px solid #FDF6E3; background: #111; line-height: 0; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; touch-action: none; }
+        canvas { max-width: 100%; height: auto; display: block; }
+        #game-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 20; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .stats-container { display: flex; justify-content: center; gap: 40px; font-family: 'Courier New', monospace; margin-top: 20px; }
         
+        /* Mobile Control Buttons */
+        .mobile-btn {
+            position: absolute; bottom: 15px; width: 70px; height: 70px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%; color: white; font-size: 24px;
+            display: none; align-items: center; justify-content: center;
+            user-select: none; z-index: 15; -webkit-tap-highlight-color: transparent;
+        }
+        #leftBtn { left: 15px; }
+        #rightBtn { right: 15px; }
+
         footer { background-color: #1a1a1a; color: #777; text-align: center; padding: 40px 20px; font-size: 0.8em; }
         
-        @media (max-width: 600px) { .edu-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { 
+            .edu-grid { grid-template-columns: 1fr; } 
+            .mobile-btn { display: flex; }
+        }
     </style>
 </head>
 <body>
@@ -138,8 +154,8 @@
     <p>My research spans neurocognitive mechanisms of decision-making, effort, and longitudinal investigations into social behaviour and mental health.</p>
 
     <div class="pub-item">
-        <span class="pub-title">The structural and functional signature of cognitive effort-related decision-making in the developing brain</span>
-        <span class="pub-meta">Nature Communications (2023) • Keertana Ganesan, et al.</span>
+        <span class="pub-title">Cognitive control training with domain-general response inhibition does not change children’s brains or behavior</span>
+        <span class="pub-meta">Nature Neuroscience (2024) • Keertana Ganesan, et al.</span>
     </div>
 
     <div class="pub-item">
@@ -158,11 +174,9 @@
         <a href="https://www.linkedin.com/in/keertana-ganesan-572b90b0/" target="_blank" title="LinkedIn">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="#4B5320"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
         </a>
-        
         <a href="https://scholar.google.com/citations?user=1tOqYcoAAAAJ&hl=en" target="_blank" title="Google Scholar">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="#4B5320"><path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2zM4.67 11.29l-1.91-1L12 14.75l9.24-4.46-1.91 1L12 15.25l-7.33-3.96z"/></svg>
         </a>
-        
         <a href="mailto:keertana.ganesan@gmail.com" title="Email Me">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="#4B5320"><path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/></svg>
         </a>
@@ -175,6 +189,10 @@
     
     <div id="game-wrapper">
         <canvas id="gameCanvas" width="600" height="350"></canvas>
+        
+        <div id="leftBtn" class="mobile-btn">←</div>
+        <div id="rightBtn" class="mobile-btn">→</div>
+
         <div id="game-overlay">
             <h2 id="overlay-title" style="font-family: 'Courier New', monospace;">SIGNAL DETECTED</h2>
             <p id="final-stats" style="font-family: 'Courier New', monospace; display:none; margin-bottom: 20px;"></p>
@@ -202,6 +220,8 @@
     const timerDisp = document.getElementById('timer-display');
     const overlayTitle = document.getElementById('overlay-title');
     const finalStats = document.getElementById('final-stats');
+    const leftBtn = document.getElementById('leftBtn');
+    const rightBtn = document.getElementById('rightBtn');
 
     let score = 0;
     let highScore = localStorage.getItem('brainBugHighScore') || 0;
@@ -220,6 +240,7 @@
     const goal = { x: 500, y: 150, r: 12 };
     const keys = {};
 
+    // DESKTOP KEYBOARD
     window.addEventListener('keydown', e => {
         if(["Space","ArrowUp","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) e.preventDefault();
         if(e.code === 'Space' && player.jumpsLeft > 0 && isRunning) {
@@ -231,33 +252,23 @@
     });
     window.addEventListener('keyup', e => keys[e.code] = false);
 
-    // --- MOBILE TOUCH LOGIC START ---
+    // MOBILE BUTTON LOGIC
+    leftBtn.addEventListener('touchstart', e => { e.preventDefault(); keys['ArrowLeft'] = true; }, {passive: false});
+    leftBtn.addEventListener('touchend', e => { e.preventDefault(); keys['ArrowLeft'] = false; }, {passive: false});
+    
+    rightBtn.addEventListener('touchstart', e => { e.preventDefault(); keys['ArrowRight'] = true; }, {passive: false});
+    rightBtn.addEventListener('touchend', e => { e.preventDefault(); keys['ArrowRight'] = false; }, {passive: false});
+
+    // MOBILE JUMP LOGIC (Tap anywhere on canvas to jump)
     canvas.addEventListener('touchstart', e => {
         e.preventDefault();
         if(!isRunning) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width; 
-        const touchX = (e.touches[0].clientX - rect.left) * scaleX;
-        const playerCenterX = player.x + (player.w / 2);
-
-        if (touchX < playerCenterX - 10) {
-            player.dx = -player.speed;
-        } else if (touchX > playerCenterX + 10) {
-            player.dx = player.speed;
-        }
-
         if(player.jumpsLeft > 0) {
             player.dy = -player.jump;
             player.jumpsLeft--;
             player.grounded = false;
         }
     }, {passive: false});
-
-    canvas.addEventListener('touchend', e => {
-        player.dx = 0;
-    }, {passive: false});
-    // --- MOBILE TOUCH LOGIC END ---
 
     function startGame() {
         score = 0; timeLeft = 30; player.x = 50; player.y = 250;
@@ -288,24 +299,22 @@
         finalStats.style.display = 'block';
     }
 
-    function gameLoop() {
-        if (!isRunning) return;
-        update(); draw();
-        requestAnimationFrame(gameLoop);
-    }
-
     function update() {
         if (keys['ArrowLeft']) player.dx = -player.speed;
         else if (keys['ArrowRight']) player.dx = player.speed;
         else player.dx = 0;
+
         player.x += player.dx;
         player.dy += 0.6; player.y += player.dy;
+
         if (player.y + player.h > canvas.height - 40) {
             player.y = canvas.height - 40 - player.h;
             player.dy = 0; player.grounded = true; player.jumpsLeft = 3; 
         }
+
         if (player.x < 0) player.x = 0;
         if (player.x + player.w > canvas.width) player.x = canvas.width - player.w;
+
         let dist = Math.hypot((player.x + player.w/2) - goal.x, (player.y + player.h/2) - goal.y);
         if (dist < 40) {
             score++;
@@ -340,6 +349,12 @@
             if(i === -15) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.stroke();
+    }
+
+    function gameLoop() {
+        if (!isRunning) return;
+        update(); draw();
+        requestAnimationFrame(gameLoop);
     }
 </script>
 
