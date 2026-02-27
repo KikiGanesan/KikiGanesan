@@ -230,7 +230,17 @@
         keys[e.code] = true;
     });
     window.addEventListener('keyup', e => keys[e.code] = false);
-
+// Touch support for mobile
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault(); // Prevents the screen from scrolling while playing
+    if(!isRunning) return;
+    
+    if(player.jumpsLeft > 0) {
+        player.dy = -player.jump;
+        player.jumpsLeft--;
+        player.grounded = false;
+    }
+}, {passive: false});
     function startGame() {
         score = 0; timeLeft = 30; player.x = 50; player.y = 250;
         scoreDisp.innerText = "0"; timerDisp.innerText = "30";
