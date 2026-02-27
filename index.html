@@ -230,24 +230,24 @@
         keys[e.code] = true;
     });
     window.addEventListener('keyup', e => keys[e.code] = false);
-// Enhanced Mobile Controls: Tap sides to move, tap center/anywhere to jump
+// Universal Mobile Control: Move toward touch + Jump
 canvas.addEventListener('touchstart', e => {
     e.preventDefault();
     if(!isRunning) return;
 
-    const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-    const canvasWidth = canvas.clientWidth;
+    // Get the exact touch position relative to the game box
+    const rect = canvas.getBoundingClientRect();
+    const touchX = e.touches[0].clientX - rect.left;
+    const playerCenterX = player.x + (player.w / 2);
 
-    // Movement Logic: Divide screen into thirds
-    if (touchX < canvasWidth * 0.3) {
-        // Left third: Move Left
+    // If touch is to the left of the bug, move left. If right, move right.
+    if (touchX < playerCenterX - 10) {
         player.dx = -player.speed;
-    } else if (touchX > canvasWidth * 0.7) {
-        // Right third: Move Right
+    } else if (touchX > playerCenterX + 10) {
         player.dx = player.speed;
     }
 
-    // Jump Logic: Tapping always triggers a jump if available
+    // Always trigger jump on any tap
     if(player.jumpsLeft > 0) {
         player.dy = -player.jump;
         player.jumpsLeft--;
@@ -259,18 +259,6 @@ canvas.addEventListener('touchstart', e => {
 canvas.addEventListener('touchend', e => {
     player.dx = 0;
 }, {passive: false});
-    function startGame() {
-        score = 0; timeLeft = 30; player.x = 50; player.y = 250;
-        scoreDisp.innerText = "0"; timerDisp.innerText = "30";
-        overlay.style.display = 'none'; finalStats.style.display = 'none';
-        isRunning = true;
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            timerDisp.innerText = timeLeft;
-            if(timeLeft <= 0) endGame();
-        }, 1000);
-        gameLoop();
-    }
 
     function endGame() {
         isRunning = false;
